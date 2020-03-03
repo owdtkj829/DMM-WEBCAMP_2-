@@ -1,86 +1,123 @@
-<div class="body">
+<header class="navbar navbar-fixed-top navbar-inverse">
     <div class="container">
-        <p id="notice"></p>
-        <div class="row">
-            <div class="col-xs-3">
-                <h2>User info</h2>
-                <table class="table">
-                    <tbody>
-                        <%= form_for(@user) do |f| %>
-                        <tr>
-                            <th>
-                                <%= attachment_image_tag @user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
-                            </th>
-                        </tr>
-                        <th>name</th>
+        <nav class="nav navbar-nav navbar-left">
+            <span>Bookers</span>
+        </nav>
+        <nav>
+            <ul class="nav navbar-nav navbar-right">
+                <!--if文でサインインとアウト時の表示を変更-->
+                <% if user_signed_in? %>
+                <li>
+                    <%= link_to ' home', user_path(current_user), class: 'glyphicon glyphicon-home home' %>
+                </li>
+                <li>
+                    <%= link_to ' users', users_path, class: 'glyphicon glyphicon-user users' %>
+                </li>
+                <li>
+                    <%= link_to ' books', books_path, class: 'glyphicon glyphicon-book books' %>
+                </li>
+                <li>
+                    <%= link_to ' log out', destroy_user_session_path, method: :delete, class: 'glyphicon glyphicon-log-out logout' %>
+                </li>
+                <% else %>
+                <li>
+                    <%= link_to ' home', root_path, class: 'glyphicon glyphicon-home home' %>
+                </li>
+                <li>
+                    <%= link_to ' about', home_about_path, class: 'glyphicon glyphicon-link about' %>
+                </li>
+                <li>
+                    <%= link_to ' Sign up', new_user_registration_path, class: 'glyphicon glyphicon-edit sign_up' %>
+                </li>
+                <li>
+                    <%= link_to ' login', new_user_session_path, class: 'glyphicon glyphicon-log-in sign_in' %>
+                </li>
+                <% end %>
+            </ul>
+        </nav>
+    </div>
+</header>
+<div class="container">
+    <p id="notice"></p>
+    <div class="row">
+        <div class="col-xs-3">
+            <h2>User info</h2>
+            <table class="table">
+                <tbody>
+                    <%= form_for(@user) do |f| %>
+                    <tr>
                         <th>
-                            <%= @user.name %>
+                            <%= attachment_image_tag @user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
                         </th>
-                        </tr>
-                        <tr>
-                            <th>introduction</th>
-                            <th>
-                                <%= @user.introduction %>
-                            </th>
-                        </tr>
-                        <% end %>
-                    </tbody>
-                </table>
-                <% if @user.id == current_user.id %>
-                <div class="row">
-                    <%= link_to'edit',edit_user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
+                    </tr>
+                    <th>name</th>
+                    <th>
+                        <%= @user.name %>
+                    </th>
+                    </tr>
+                    <tr>
+                        <th>introduction</th>
+                        <th>
+                            <%= @user.introduction %>
+                        </th>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <% if @user.id == current_user.id %>
+            <div class="row">
+                <%= link_to'edit',edit_user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
+            </div>
+            <%else%>
+            <div class="row">
+                <%= link_to'edit',user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
+            </div>
+            <% end %>
+            <div class="row">
+                <h2>New book</h2>
+                <%= form_for(@book) do |f| %>
+                <% if @book.errors.any? %>
+                <p>error</p>
+                <% end %>
+                <div>
+                    <h4>Title</h4>
+                    <%= f.text_field :title, class: 'col-xs-12'%>
                 </div>
-                <%else%>
-                <div class="row">
-                    <%= link_to'edit',user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
+                <div>
+                    <h4>Opinion</h4>
+                    <%= f.text_area :body ,class: 'col-xs-12'%>
+                </div><br>
+                <div>
+                    <%= f.submit 'Create Book',class: 'btn btn-primary col-xs-12' %>
                 </div>
                 <% end %>
-                <div class="row">
-                    <h2>New book</h2>
-                    <%= form_for(@book) do |f| %>
-                    <% if @book.errors.any? %>
-                    <p>error</p>
-                    <% end %>
-                    <div>
-                        <h4>Title</h4>
-                        <%= f.text_field :title, class: 'col-xs-12'%>
-                    </div>
-                    <div>
-                        <h4>Opinion</h4>
-                        <%= f.text_area :body ,class: 'col-xs-12'%>
-                    </div><br>
-                    <div>
-                        <%= f.submit 'Create Book',class: 'btn btn-primary col-xs-12' %>
-                    </div>
-                    <% end %>
-                </div>
             </div>
-            <div class="col-xs-9">
-                <h2>Users</h2>
-                <table class="table ">
-                    <thead>
-                        <th>image</th>
-                        <th>name</th>
+        </div>
+        <div class="col-xs-9">
+            <h2>Users</h2>
+            <table class="table ">
+                <thead>
+                    <th>image</th>
+                    <th>name</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <% @users.each do |user| %>
+                    <tr>
+                        <th>
+                            <%=  attachment_image_tag user,:profile_image,size:'40x40',fallback: "no_image.jpg" %>
+                        </th>
+                        <th>
+                            <%= user.name %>
+                        </th>
+                        <th>
+                            <%= link_to 'Show',user_path(user.id) %>
+                        </th>
                         <th></th>
-                    </thead>
-                    <tbody>
-                        <% @users.each do |user| %>
-                        <tr>
-                            <th>
-                                <%=  attachment_image_tag user,:profile_image,size:'40x40',fallback: "no_image.jpg" %>
-                            </th>
-                            <th>
-                                <%= user.name %>
-                            </th>
-                            <th>
-                                <%= link_to 'Show',user_path(user.id) %>
-                            </th>
-                            <th></th>
-                        </tr>
-                        <%end%>
-                    </tbody>
-                </table>
-            </div>
+                    </tr>
+                    <%end%>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

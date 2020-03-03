@@ -1,23 +1,60 @@
-<body>
-    <div class="row">
-        <div class="main col-md-offset-3 col-md-6">
-            <h1>welcome to<span class="glyphicon glyphicon-book"></span>
-                <strong>Bookers</strong> !!</h1>
-            <p>In <span class="glyphicon glyphicon-book"></span><strong>Bookers</strong>,</p>
-            <p>you can share and exchange your opinions , inpressions , and emotions</p>
-            <p>about varioius books!</p>
-            <div class="btn-wrapper">
-                <div class="row">
-                    <p>
-                        <%=link_to "login", new_user_session_path, class: "btn btn-info col-xs-10 col-xs-offset-1" %>
-                    </p>
-                </div>
-                <div class="row">
-                    <p>
-                        <%=link_to "Sign up", new_user_registration_path, class: "btn btn-success col-xs-10 col-xs-offset-1" %>
-                    </p>
-                </div>
+<header class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
+        <nav class="nav navbar-nav navbar-left">
+            <span>Bookers</span>
+        </nav>
+        <nav>
+            <ul class="nav navbar-nav navbar-right">
+                <!--if文でサインインとアウト時の表示を変更-->
+                <% if user_signed_in? %>
+                <li>
+                    <%= link_to ' home', user_path(current_user), class: 'glyphicon glyphicon-home home' %>
+                </li>
+                <li>
+                    <%= link_to ' users', users_path, class: 'glyphicon glyphicon-user users' %>
+                </li>
+                <li>
+                    <%= link_to ' books', books_path, class: 'glyphicon glyphicon-book books' %>
+                </li>
+                <li>
+                    <%= link_to ' log out', destroy_user_session_path, method: :delete, class: 'glyphicon glyphicon-log-out logout' %>
+                </li>
+                <% else %>
+                <li>
+                    <%= link_to ' home', root_path, class: 'glyphicon glyphicon-home home' %>
+                </li>
+                <li>
+                    <%= link_to ' about', home_about_path, class: 'glyphicon glyphicon-link about' %>
+                </li>
+                <li>
+                    <%= link_to ' Sign up', new_user_registration_path, class: 'glyphicon glyphicon-edit sign_up' %>
+                </li>
+                <li>
+                    <%= link_to ' login', new_user_session_path, class: 'glyphicon glyphicon-log-in sign_in' %>
+                </li>
+                <% end %>
+            </ul>
+        </nav>
+    </div>
+</header>
+<div class="row">
+    <div class="main col-md-offset-3 col-md-6">
+        <h1>welcome to<span class="glyphicon glyphicon-book"></span>
+            <strong>Bookers</strong> !!</h1>
+        <p>In <span class="glyphicon glyphicon-book"></span><strong>Bookers</strong>,</p>
+        <p>you can share and exchange your opinions , inpressions , and emotions</p>
+        <p>about varioius books!</p>
+        <div class="btn-wrapper">
+            <div class="row">
+                <p>
+                    <%=link_to "Log in", new_user_session_path, class: "btn btn-info col-xs-10 col-xs-offset-1" %>
+                </p>
+            </div>
+            <div class="row">
+                <p>
+                    <%=link_to "Sign up", new_user_registration_path, class: "btn btn-success col-xs-10 col-xs-offset-1" %>
+                </p>
             </div>
         </div>
     </div>
-</body>
+</div>

@@ -1,123 +1,216 @@
-<div class="body">
+<header class="navbar navbar-fixed-top navbar-inverse">
     <div class="container">
-        <p id="notice"></p>
-        <div class="row">
-            <div class="col-xs-3">
-                <h2>User info</h2>
-                <table class="table">
-                    <tbody>
+        <nav class="nav navbar-nav navbar-left">
+            <span>Bookers</span>
+        </nav>
+        <nav>
+            <ul class="nav navbar-nav navbar-right">
+                <!--if文でサインインとアウト時の表示を変更-->
+                <% if user_signed_in? %>
+                <li>
+                    <%= link_to ' home', user_path(current_user), class: 'glyphicon glyphicon-home home' %>
+                </li>
+                <li>
+                    <%= link_to ' users', users_path, class: 'glyphicon glyphicon-user users' %>
+                </li>
+                <li>
+                    <%= link_to ' books', books_path, class: 'glyphicon glyphicon-book books' %>
+                </li>
+                <li>
+                    <%= link_to ' log out', destroy_user_session_path, method: :delete, class: 'glyphicon glyphicon-log-out logout' %>
+                </li>
+                <% else %>
+                <li>
+                    <%= link_to ' home', root_path, class: 'glyphicon glyphicon-home home' %>
+                </li>
+                <li>
+                    <%= link_to ' about', home_about_path, class: 'glyphicon glyphicon-link about' %>
+                </li>
+                <li>
+                    <%= link_to ' Sign up', new_user_registration_path, class: 'glyphicon glyphicon-edit sign_up' %>
+                </li>
+                <li>
+                    <%= link_to ' login', new_user_session_path, class: 'glyphicon glyphicon-log-in sign_in' %>
+                </li>
+                <% end %>
+            </ul>
+        </nav>
+    </div>
+</header>
+<div class="container">
+    <p id="notice"></p>
+    <div class="row">
+        <div class="col-xs-3">
+            <h2>User info</h2>
+            <table class="table">
+                <tbody>
+                    <% if @booker.user_id == current_user.id %>
+                    <tr>
+                        <th>
+                            <%= attachment_image_tag @user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
+                        </th>
+                    </tr>
+                    <th>name</th>
+                    <th>
+                        <%= @user.name %>
+                    </th>
+                    </tr>
+                    <tr>
+                        <th>introduction</th>
+                        <th>
+                            <%= @user.introduction %>
+                        </th>
+                    </tr>
+                    <% else %>
+                    <tr>
+                        <th>
+                            <%= attachment_image_tag @booker.user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
+                        </th>
+                    </tr>
+                    <th>name</th>
+                    <th>
+                        <%= @booker.user.name %>
+                    </th>
+                    </tr>
+                    <tr>
+                        <th>introduction</th>
+                        <th>
+                            <%= @booker.user.introduction %>
+                        </th>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <% if @user.id == current_user.id %>
+            <div class="row">
+                <%= link_to'edit',edit_user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
+            </div>
+            <%else%>
+            <div class="row">
+                <%= link_to'edit',user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
+            </div>
+            <% end %>
+            <div class="row">
+                <h2>New book</h2>
+                <%= form_for(@book) do |f| %>
+                <% if @book.errors.any? %>
+                <p>error</p>
+                <% end %>
+                <div>
+                    <h4>Title</h4>
+                    <%= f.text_field :title, class: 'col-xs-12'%>
+                </div>
+                <div>
+                    <h4>Opinion</h4>
+                    <%= f.text_area :body ,class: 'col-xs-12'%>
+                </div><br>
+                <div>
+                    <%= f.submit 'Create Book',class: 'btn btn-primary col-xs-12' %>
+                </div>
+                <% end %>
+            </div>
+        </div>
+        <div class="col-xs-9">
+            <table class="table table-hover table-inverse">
+                <div class="col-xs-9">
+                    <h2>Book detail</h2>
+                    <div class="row">
                         <% if @booker.user_id == current_user.id %>
                         <tr>
-                            <th>
-                                <%= attachment_image_tag @user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
-                            </th>
-                        </tr>
-                        <th>name</th>
-                        <th>
-                            <%= @user.name %>
-                        </th>
-                        </tr>
-                        <tr>
-                            <th>introduction</th>
-                            <th>
-                                <%= @user.introduction %>
-                            </th>
+                            <td>
+                                <%= link_to user_path(current_user.id) do %>
+                                <%= attachment_image_tag current_user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
+                                <%= @user.name %>
+                                <% end %>
+                            </td>
+                            <td>
+                                <%= link_to @booker.title,book_path(@booker)%>
+                            </td>
+                            <td>
+                                <%= @booker.body%>
+                            </td>
+                            <td>
+                                <%if @booker.favorited_by?(current_user)%>
+                                <%= link_to book_favorites_path(@booker),method: :delete do%>
+                                <i class="glyphicon glyphicon-heart" aria-hidden="true"></i>
+                                <%= @booker.favorites.count %>
+                                <% end %>
+                                <%else%>
+                                <%= link_to book_favorites_path(@booker),method: :post do%>
+                                <div class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
+                                <%end%>
+                                <%end%>
+                            </td>
+                            <td>
+                                <%= link_to'Edit',edit_book_path(@booker.id), class:"btn btn-success"%>
+                            </td>
+                            <td>
+                                <%= link_to 'Destroy', book_path(@booker), method: :delete, data: { confirm: '削除しますか？' },class:"btn btn-danger" %>
+                            </td>
                         </tr>
                         <% else %>
                         <tr>
-                            <th>
-                                <%= attachment_image_tag @booker.user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
-                            </th>
-                        </tr>
-                        <th>name</th>
-                        <th>
-                            <%= @booker.user.name %>
-                        </th>
-                        </tr>
-                        <tr>
-                            <th>introduction</th>
-                            <th>
-                                <%= @booker.user.introduction %>
-                            </th>
+                            <td>
+                                <%= link_to user_path(@booker.user.id) do %>
+                                <%= attachment_image_tag @booker.user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
+                                <%= @booker.user.name %>
+                                <% end %>
+                            </td>
+                            <td>
+                                <%= @booker.title%>
+                            </td>
+                            <td>
+                                <%= @booker.body%>
+                            </td>
+                            <td>
+                                <%if @booker.favorited_by?(current_user)%>
+                                <%= link_to book_favorites_path(@booker),method: :delete do%>
+                                <i class="glyphicon glyphicon-heart" aria-hidden="true"></i>
+                                <%= @booker.favorites.count %>
+                                <% end %>
+                                <%else%>
+                                <%= link_to book_favorites_path(@booker),method: :post do%>
+                                <div class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
+                                <%end%>
+                                <%end%>
+                            </td>
                         </tr>
                         <% end %>
-                    </tbody>
-                </table>
-                <% if @user.id == current_user.id %>
-                <div class="row">
-                    <%= link_to'edit',edit_user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
-                </div>
-                <%else%>
-                <div class="row">
-                    <%= link_to'edit',user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
-                </div>
-                <% end %>
-                <div class="row">
-                    <h2>New book</h2>
-                    <%= form_for(@book) do |f| %>
-                    <% if @book.errors.any? %>
-                    <p>error</p>
-                    <% end %>
-                    <div>
-                        <h4>Title</h4>
-                        <%= f.text_field :title, class: 'col-xs-12'%>
                     </div>
-                    <div>
-                        <h4>Opinion</h4>
-                        <%= f.text_area :body ,class: 'col-xs-12'%>
-                    </div><br>
-                    <div>
-                        <%= f.submit 'Create Book',class: 'btn btn-primary col-xs-12' %>
-                    </div>
-                    <% end %>
                 </div>
-            </div>
-            <div class="col-xs-9">
-                <table class="table table-hover table-inverse">
-                    <div class="col-xs-9">
-                        <h2>Book detail</h2>
-                        <tbody>
-                            <% if @booker.user_id == current_user.id %>
-                            <tr>
-                                <td>
-                                    <%= link_to user_path(current_user.id) do %>
-                                    <%= attachment_image_tag current_user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
-                                    <%= @user.name %>
-                                    <% end %>
-                                </td>
-                                <td>
-                                    <%= link_to @booker.title,book_path(@booker)%>
-                                </td>
-                                <td>
-                                    <%= @booker.body%>
-                                </td>
-                                <td>
-                                    <%= link_to'Edit',edit_book_path(@booker.id), class:"btn btn-success"%>
-                                </td>
-                                <td>
-                                    <%= link_to 'Destroy', book_path(@booker), method: :delete, data: { confirm: '削除しますか？' },class:"btn btn-danger" %>
-                                </td>
-                            </tr>
-                            <% else %>
-                            <tr>
-                                <td>
-                                    <%= link_to user_path(@booker.user.id) do %>
-                                    <%= attachment_image_tag @booker.user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
-                                    <%= @booker.user.name %>
-                                    <% end %>
-                                </td>
-                                <td>
-                                    <%= @booker.title%>
-                                </td>
-                                <td>
-                                    <%= @booker.body%>
-                                </td>
-                            </tr>
+            </table>
+        </div>
+        <div class="col-xs-9">
+            <table class="table table-hover table-inverse">
+                <% @booker.book_comments.each do |book_comment|%>
+                <div class="comment">
+                    <tr>
+                        <td>
+                            <%= attachment_image_tag book_comment.user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
+                            <%= book_comment.user.name %>
+                        </td>
+                        <td>
+                            <%= book_comment.comment%>
+                        </td>
+                        <td>
+                            <% if book_comment.user_id == current_user.id%>
+                            <%= link_to 'Destroy', book_book_comments_path(@booker),method: :delete, data: { confirm: '削除しますか？' },class:"btn btn-danger" %>
                             <% end %>
-                        </tbody>
+                        </td>
+                    </tr>
+                </div>
+                <%end%>
+                <div class="col-xs-12">
+                    <%= form_for [@booker,@book_comment] do |f|%>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <%= f.text_area :comment,rows:5, class: "form-control"%>
+                        </div>
+                        <%= f.submit "送信" ,class: "btn btn-default mt-20 pull-right"%>
                     </div>
-                </table>
-            </div>
+                    <%end%>
+                </div>
+            </table>
         </div>
     </div>
 </div>
