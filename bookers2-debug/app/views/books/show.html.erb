@@ -61,6 +61,18 @@
                             <%= @user.introduction %>
                         </th>
                     </tr>
+                     <tr>
+                            <th>follows</th>
+                            <th>
+                                <%= link_to @user.followings.count,follows_path(@user) %>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>followers</th>
+                            <th>
+                                <%= link_to @user.followers.count,followers_path(@user)%>
+                            </th>
+                        </tr>
                     <% else %>
                     <tr>
                         <th>
@@ -87,8 +99,20 @@
             </div>
             <%else%>
             <div class="row">
-                <%= link_to'edit',user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
-            </div>
+                    <% unless current_user == @user %>
+                    <% if current_user.following?(@user) %>
+                    <%= form_for(current_user.relationships.find_by(follow_id: @user.id), html: { method: :delete }) do |f| %>
+                    <%= hidden_field_tag :follow_id, @user.id %>
+                    <%= f.submit 'Unfollow', class: 'btn btn-danger btn-block' %>
+                    <% end %>
+                    <% else %>
+                    <%= form_for(current_user.relationships.build) do |f| %>
+                    <%= hidden_field_tag :follow_id, @user.id %>
+                    <%= f.submit 'Follow', class: 'btn btn-primary btn-block' %>
+                    <% end %>
+                    <% end %>
+                    <% end %>
+                </div>
             <% end %>
             <div class="row">
                 <h2>New book</h2>
@@ -138,6 +162,7 @@
                                 <%else%>
                                 <%= link_to book_favorites_path(@booker),method: :post do%>
                                 <div class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
+                                <%= @booker.favorites.count %>
                                 <%end%>
                                 <%end%>
                             </td>
@@ -171,6 +196,7 @@
                                 <%else%>
                                 <%= link_to book_favorites_path(@booker),method: :post do%>
                                 <div class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
+                                <%= @booker.favorites.count %>
                                 <%end%>
                                 <%end%>
                             </td>

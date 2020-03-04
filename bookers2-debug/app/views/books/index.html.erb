@@ -60,6 +60,21 @@
                             <%= @user.introduction %>
                         </th>
                     </tr>
+                    <% if @user.id == current_user.id %>
+                        <tr>
+                            <th>follows</th>
+                            <th>
+                                <%= link_to @user.followings.count,follows_path(@user) %>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>followers</th>
+                            <th>
+                                <%= link_to @user.followers.count,followers_path(@user)%>
+                            </th>
+                        </tr>
+                    </div>
+                    <%end%>
                 </tbody>
             </table>
             <div class="row">
@@ -121,6 +136,7 @@
                             <%else%>
                             <%= link_to book_favorites_path(book),method: :post do%>
                             <i class="glyphicon glyphicon-heart-empty" aria-hidden="true"></i>
+                            <%= book.favorites.count %>
                             <%end%>
                             <%end%>
                         </th>

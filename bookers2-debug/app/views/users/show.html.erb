@@ -44,7 +44,7 @@
             <h2>User info</h2>
             <div>
                 <table class="table">
-                    <tbody>
+                    <div class="row">
                         <tr>
                             <th>
                                 <%= attachment_image_tag @user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
@@ -61,16 +61,42 @@
                                 <%= @user.introduction %>
                             </th>
                         </tr>
-                    </tbody>
+                        <% if @user.id == current_user.id %>
+                        <tr>
+                            <th>follows</th>
+                            <th>
+                                <%= link_to @user.followings.count,follows_path(@user) %>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>followers</th>
+                            <th>
+                                <%= link_to @user.followers.count,followers_path(@user)%>
+                            </th>
+                        </tr>
+                        <%end%>
+                    </div>
                 </table>
                 <% if @user.id == current_user.id %>
                 <div class="row">
                     <%= link_to'edit',edit_user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
                 </div>
                 <%else%>
-                <div class="row">
-                    <%= link_to'edit',user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
-                </div>
+                    <div class="row">
+                        <% unless current_user == @user %>
+                            <% if current_user.following?(@user) %>
+                                <%= form_for(current_user.relationships.find_by(follow_id: @user.id), html: { method: :delete }) do |f| %>
+                                    <%= hidden_field_tag :follow_id, @user.id %>
+                                    <%= f.submit 'Unfollow', class: 'btn btn-danger btn-block' %>
+                                <% end %>
+                            <% else %>
+                                <%= form_for(current_user.relationships.build) do |f| %>
+                                    <%= hidden_field_tag :follow_id, @user.id %>
+                                    <%= f.submit 'Follow', class: 'btn btn-primary btn-block' %>
+                                <% end %>
+                            <% end %>
+                        <% end %>
+                    </div>
                 <% end %>
             </div>
             <div class="row">
@@ -115,7 +141,8 @@
                             <%= book.body %>
                         </th>
                         <th>
-                            <a>コメント数：<%= book.book_comments.count %></a>
+                            <a>コメント数：
+                                <%= book.book_comments.count %></a>
                         </th>
                     </tr>
                     <%end%>
