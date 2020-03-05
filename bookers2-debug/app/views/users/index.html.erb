@@ -40,6 +40,16 @@
 <div class="container">
     <p id="notice"></p>
     <div class="row">
+        <div class="row">
+            <div class="row">
+                <%= form_tag(search_users_path,:method => 'get') do %>
+                <%= text_field_tag :search %>
+                <%= select_tag(:option, options_for_select([["User", "1"],["Book","2"]]))%>
+                <%= select_tag(:choice, options_for_select([["あいまい検索", "1" ],["後方一致検索", "2" ],["前方一致検索", "3" ],["完全一致検索", "4" ]])) %>
+                <%= submit_tag '検索', :name => nil %>
+                <% end %>
+            </div>
+        </div>
         <div class="col-xs-3">
             <h2>User info</h2>
             <table class="table">

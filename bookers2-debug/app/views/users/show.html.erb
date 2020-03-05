@@ -40,114 +40,123 @@
 <div class="container">
     <p id="notice"></p>
     <div class="row">
-        <div class="col-xs-3">
-            <h2>User info</h2>
-            <div>
-                <table class="table">
-                    <div class="row">
-                        <tr>
-                            <th>
-                                <%= attachment_image_tag @user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
-                            </th>
-                        </tr>
-                        <th>name</th>
-                        <th>
-                            <%= @user.name %>
-                        </th>
-                        </tr>
-                        <tr>
-                            <th>introduction</th>
-                            <th>
-                                <%= @user.introduction %>
-                            </th>
-                        </tr>
-                        <% if @user.id == current_user.id %>
-                        <tr>
-                            <th>follows</th>
-                            <th>
-                                <%= link_to @user.followings.count,follows_path(@user) %>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>followers</th>
-                            <th>
-                                <%= link_to @user.followers.count,followers_path(@user)%>
-                            </th>
-                        </tr>
-                        <%end%>
-                    </div>
-                </table>
-                <% if @user.id == current_user.id %>
-                <div class="row">
-                    <%= link_to'edit',edit_user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
-                </div>
-                <%else%>
-                    <div class="row">
-                        <% unless current_user == @user %>
-                            <% if current_user.following?(@user) %>
-                                <%= form_for(current_user.relationships.find_by(follow_id: @user.id), html: { method: :delete }) do |f| %>
-                                    <%= hidden_field_tag :follow_id, @user.id %>
-                                    <%= f.submit 'Unfollow', class: 'btn btn-danger btn-block' %>
-                                <% end %>
-                            <% else %>
-                                <%= form_for(current_user.relationships.build) do |f| %>
-                                    <%= hidden_field_tag :follow_id, @user.id %>
-                                    <%= f.submit 'Follow', class: 'btn btn-primary btn-block' %>
-                                <% end %>
-                            <% end %>
-                        <% end %>
-                    </div>
-                <% end %>
-            </div>
-            <div class="row">
-                <h2>New book</h2>
-                <%= form_for(@book) do |f| %>
-                <% if @book.errors.any? %>
-                <p>error</p>
-                <% end %>
-                <div>
-                    <h4>Title</h4>
-                    <%= f.text_field :title, class: 'col-xs-12'%>
-                </div>
-                <div>
-                    <h4>Opinion</h4>
-                    <%= f.text_area :body ,class: 'col-xs-12'%>
-                </div><br>
-                <div>
-                    <%= f.submit 'Create Book',class: 'btn btn-primary col-xs-12' %>
-                </div>
-                <% end %>
-            </div>
+        <div class="row">
+            <%= form_tag(search_users_path,:method => 'get') do %>
+            <%= text_field_tag :search %>
+            <%= select_tag(:option, options_for_select([["User", "1"],["Book","2"]]))%>
+            <%= select_tag(:choice, options_for_select([["あいまい検索", "1" ],["後方一致検索", "2" ],["前方一致検索", "3" ],["完全一致検索", "4" ]])) %>
+            <%= submit_tag '検索', :name => nil %>
+            <% end %>
         </div>
-        <div class="col-xs-9">
-            <h2>Books</h2>
-            <table class="table ">
-                <thead>
-                    <th></th>
-                    <th>Title</th>
-                    <th>Opinion</th>
-                    <th></th>
-                </thead>
-                <tbody>
-                    <% @books.each do |book| %>
+    </div>
+    <div class="col-xs-3">
+        <h2>User info</h2>
+        <div>
+            <table class="table">
+                <div class="row">
                     <tr>
                         <th>
-                            <%= attachment_image_tag book.user,:profile_image,size:"40x40",fallback: "no_image.jpg"%>
+                            <%= attachment_image_tag @user, :profile_image,size:"100x100", fallback: "no_image.jpg" %>
                         </th>
+                    </tr>
+                    <th>name</th>
+                    <th>
+                        <%= @user.name %>
+                    </th>
+                    </tr>
+                    <tr>
+                        <th>introduction</th>
                         <th>
-                            <%= link_to book.title,book_path(book.id) %>
+                            <%= @user.introduction %>
                         </th>
+                    </tr>
+                    <% if @user.id == current_user.id %>
+                    <tr>
+                        <th>follows</th>
                         <th>
-                            <%= book.body %>
+                            <%= link_to @user.followings.count,follows_path(@user) %>
                         </th>
+                    </tr>
+                    <tr>
+                        <th>followers</th>
                         <th>
-                            <a>コメント数：
-                                <%= book.book_comments.count %></a>
+                            <%= link_to @user.followers.count,followers_path(@user)%>
                         </th>
                     </tr>
                     <%end%>
-                </tbody>
+                </div>
             </table>
+            <% if @user.id == current_user.id %>
+            <div class="row">
+                <%= link_to'edit',edit_user_path(current_user.id), class: 'btn btn-primary col-xs-12'%>
+            </div>
+            <%else%>
+            <div class="row">
+                <% unless current_user == @user %>
+                <% if current_user.following?(@user) %>
+                <%= form_for(current_user.relationships.find_by(follow_id: @user.id), html: { method: :delete }) do |f| %>
+                <%= hidden_field_tag :follow_id, @user.id %>
+                <%= f.submit 'Unfollow', class: 'btn btn-danger btn-block' %>
+                <% end %>
+                <% else %>
+                <%= form_for(current_user.relationships.build) do |f| %>
+                <%= hidden_field_tag :follow_id, @user.id %>
+                <%= f.submit 'Follow', class: 'btn btn-primary btn-block' %>
+                <% end %>
+                <% end %>
+                <% end %>
+            </div>
+            <% end %>
+        </div>
+        <div class="row">
+            <h2>New book</h2>
+            <%= form_for(@book) do |f| %>
+            <% if @book.errors.any? %>
+            <p>error</p>
+            <% end %>
+            <div>
+                <h4>Title</h4>
+                <%= f.text_field :title, class: 'col-xs-12'%>
+            </div>
+            <div>
+                <h4>Opinion</h4>
+                <%= f.text_area :body ,class: 'col-xs-12'%>
+            </div><br>
+            <div>
+                <%= f.submit 'Create Book',class: 'btn btn-primary col-xs-12' %>
+            </div>
+            <% end %>
         </div>
     </div>
+    <div class="col-xs-9">
+        <h2>Books</h2>
+        <table class="table ">
+            <thead>
+                <th></th>
+                <th>Title</th>
+                <th>Opinion</th>
+                <th></th>
+            </thead>
+            <tbody>
+                <% @books.each do |book| %>
+                <tr>
+                    <th>
+                        <%= attachment_image_tag book.user,:profile_image,size:"40x40",fallback: "no_image.jpg"%>
+                    </th>
+                    <th>
+                        <%= link_to book.title,book_path(book.id) %>
+                    </th>
+                    <th>
+                        <%= book.body %>
+                    </th>
+                    <th>
+                        <a>コメント数：
+                            <%= book.book_comments.count %></a>
+                    </th>
+                </tr>
+                <%end%>
+            </tbody>
+        </table>
+    </div>
+</div>
 </div>

@@ -40,6 +40,16 @@
 <div class="container">
     <p id="notice"></p>
     <div class="row">
+        <div class="row">
+            <div class="row">
+                <%= form_tag(search_users_path,:method => 'get') do %>
+                <%= text_field_tag :search %>
+                <%= select_tag(:option, options_for_select([["User", "1"],["Book","2"]]))%>
+                <%= select_tag(:choice, options_for_select([["あいまい検索", "1" ],["後方一致検索", "2" ],["前方一致検索", "3" ],["完全一致検索", "4" ]])) %>
+                <%= submit_tag '検索', :name => nil %>
+                <% end %>
+            </div>
+        </div>
         <div class="col-xs-3">
             <h2>User info</h2>
             <table class="table">
@@ -61,18 +71,18 @@
                             <%= @user.introduction %>
                         </th>
                     </tr>
-                     <tr>
-                            <th>follows</th>
-                            <th>
-                                <%= link_to @user.followings.count,follows_path(@user) %>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>followers</th>
-                            <th>
-                                <%= link_to @user.followers.count,followers_path(@user)%>
-                            </th>
-                        </tr>
+                    <tr>
+                        <th>follows</th>
+                        <th>
+                            <%= link_to @user.followings.count,follows_path(@user) %>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>followers</th>
+                        <th>
+                            <%= link_to @user.followers.count,followers_path(@user)%>
+                        </th>
+                    </tr>
                     <% else %>
                     <tr>
                         <th>
@@ -99,20 +109,20 @@
             </div>
             <%else%>
             <div class="row">
-                    <% unless current_user == @user %>
-                    <% if current_user.following?(@user) %>
-                    <%= form_for(current_user.relationships.find_by(follow_id: @user.id), html: { method: :delete }) do |f| %>
-                    <%= hidden_field_tag :follow_id, @user.id %>
-                    <%= f.submit 'Unfollow', class: 'btn btn-danger btn-block' %>
-                    <% end %>
-                    <% else %>
-                    <%= form_for(current_user.relationships.build) do |f| %>
-                    <%= hidden_field_tag :follow_id, @user.id %>
-                    <%= f.submit 'Follow', class: 'btn btn-primary btn-block' %>
-                    <% end %>
-                    <% end %>
-                    <% end %>
-                </div>
+                <% unless current_user == @user %>
+                <% if current_user.following?(@user) %>
+                <%= form_for(current_user.relationships.find_by(follow_id: @user.id), html: { method: :delete }) do |f| %>
+                <%= hidden_field_tag :follow_id, @user.id %>
+                <%= f.submit 'Unfollow', class: 'btn btn-danger btn-block' %>
+                <% end %>
+                <% else %>
+                <%= form_for(current_user.relationships.build) do |f| %>
+                <%= hidden_field_tag :follow_id, @user.id %>
+                <%= f.submit 'Follow', class: 'btn btn-primary btn-block' %>
+                <% end %>
+                <% end %>
+                <% end %>
+            </div>
             <% end %>
             <div class="row">
                 <h2>New book</h2>

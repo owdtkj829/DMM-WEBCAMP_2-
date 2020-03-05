@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :relationships
   resources :users do
     resource :relationships, only: [:create,:destroy]
+    get :search, on: :collection
   end
   resources :books do
       resource :favorites, only: [:create, :destroy,]

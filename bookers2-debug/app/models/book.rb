@@ -10,4 +10,26 @@ class Book < ApplicationRecord
 	validates :title,presence: true
 	validates :body,presence: true
 	validates :body,length: {maximum: 200}
+
+	def self.search(search, user_or_book) #ここでのself.はUser.を意味する
+	    if user_or_book == "2"
+	       Book.where(['title LIKE ?', "%#{search}%"])
+	    else
+	       Book.none
+	    end
+	end
+
+	def Book.search(search, user_or_book, how_search)
+        if how_search == "1"
+            Book.where(['title LIKE ?', "%#{search}%"])
+        elsif how_search == "2"
+            Book.where(['title LIKE ?', "%#{search}"])
+        elsif how_search == "3"
+            Book.where(['title LIKE ?', "#{search}%"])
+        elsif how_search == "4"
+            Book.where(['title LIKE ?', "#{search}"])
+        else
+            Book.none
+        end
+    end
 end

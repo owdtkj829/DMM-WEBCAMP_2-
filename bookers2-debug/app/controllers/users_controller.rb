@@ -4,7 +4,6 @@ class UsersController < ApplicationController
 
   def show
     @book = Book.new
-    @books = current_user.books
     @user = User.find(params[:id])
     @books = User.find(params[:id]).books
   end
@@ -27,6 +26,16 @@ class UsersController < ApplicationController
     @user = current_user
     @users = User.all
     @book = Book.new
+  end
+
+  def search
+    @user_or_book = params[:option]
+    @how_search = params[:choice]
+    if @user_or_book == "1"
+      @users = User.search(params[:search], @user_or_book, @how_search)
+    else
+      @books = Book.search(params[:search], @user_or_book, @how_search)
+    end
   end
 
 
