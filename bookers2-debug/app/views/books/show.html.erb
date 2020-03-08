@@ -149,104 +149,20 @@
                 <div class="col-xs-9">
                     <h2>Book detail</h2>
                     <div class="row">
-                        <% if @booker.user_id == current_user.id %>
-                        <tr>
-                            <td>
-                                <%= link_to user_path(current_user.id) do %>
-                                <%= attachment_image_tag current_user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
-                                <%= @user.name %>
-                                <% end %>
-                            </td>
-                            <td>
-                                <%= link_to @booker.title,book_path(@booker)%>
-                            </td>
-                            <td>
-                                <%= @booker.body%>
-                            </td>
-                            <td>
-                                <%if @booker.favorited_by?(current_user)%>
-                                <%= link_to book_favorites_path(@booker),method: :delete do%>
-                                <i class="glyphicon glyphicon-heart" aria-hidden="true"></i>
-                                <%= @booker.favorites.count %>
-                                <% end %>
-                                <%else%>
-                                <%= link_to book_favorites_path(@booker),method: :post do%>
-                                <div class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
-                                <%= @booker.favorites.count %>
-                                <%end%>
-                                <%end%>
-                            </td>
-                            <td>
-                                <%= link_to'Edit',edit_book_path(@booker.id), class:"btn btn-success"%>
-                            </td>
-                            <td>
-                                <%= link_to 'Destroy', book_path(@booker), method: :delete, data: { confirm: '削除しますか？' },class:"btn btn-danger" %>
-                            </td>
-                        </tr>
-                        <% else %>
-                        <tr>
-                            <td>
-                                <%= link_to user_path(@booker.user.id) do %>
-                                <%= attachment_image_tag @booker.user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
-                                <%= @booker.user.name %>
-                                <% end %>
-                            </td>
-                            <td>
-                                <%= @booker.title%>
-                            </td>
-                            <td>
-                                <%= @booker.body%>
-                            </td>
-                            <td>
-                                <%if @booker.favorited_by?(current_user)%>
-                                <%= link_to book_favorites_path(@booker),method: :delete do%>
-                                <i class="glyphicon glyphicon-heart" aria-hidden="true"></i>
-                                <%= @booker.favorites.count %>
-                                <% end %>
-                                <%else%>
-                                <%= link_to book_favorites_path(@booker),method: :post do%>
-                                <div class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
-                                <%= @booker.favorites.count %>
-                                <%end%>
-                                <%end%>
-                            </td>
-                        </tr>
-                        <% end %>
+                        <%= render :partial => "booker" , :locals => { booker: @booker }%>
                     </div>
                 </div>
             </table>
         </div>
         <div class="col-xs-9">
-            <table class="table table-hover table-inverse">
-                <% @booker.book_comments.each do |book_comment|%>
-                <div class="comment">
-                    <tr>
-                        <td>
-                            <%= attachment_image_tag book_comment.user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
-                            <%= book_comment.user.name %>
-                        </td>
-                        <td>
-                            <%= book_comment.comment%>
-                        </td>
-                        <td>
-                            <% if book_comment.user_id == current_user.id%>
-                            <%= link_to 'Destroy', book_book_comments_path(@booker),method: :delete, data: { confirm: '削除しますか？' },class:"btn btn-danger" %>
-                            <% end %>
-                        </td>
-                    </tr>
-                </div>
-                <%end%>
-                <div class="col-xs-12">
-                    <%= form_for [@booker,@book_comment] do |f|%>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <%= f.text_area :comment,rows:5, class: "form-control"%>
-                        </div>
-                        <%= f.submit "送信" ,class: "btn btn-default mt-20 pull-right"%>
-                    </div>
-                    <%end%>
-                </div>
-            </table>
+            <div class="table">
+                <h4>コメント</h4>
+                <%= render partial: 'book_comments/comment', locals: { book_comment: @book_comment, booker: @booker } %>
+                <br>
+                <table id="comments_area">
+                    <%= render partial: 'book_comments/comments', locals: { book_comments: @book_comments } %>
+                </table>
+            </div>
         </div>
     </div>
 </div>

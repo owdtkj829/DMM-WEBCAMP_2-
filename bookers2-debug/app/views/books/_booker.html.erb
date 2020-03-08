@@ -1,0 +1,43 @@
+<% if booker.user_id == current_user.id %>
+<tr>
+    <td>
+        <%= link_to user_path(current_user.id) do %>
+        <%= attachment_image_tag current_user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
+        <%= current_user.name %>
+        <% end %>
+    </td>
+    <td>
+        <%= link_to booker.title,book_path(booker)%>
+    </td>
+    <td>
+        <%= booker.body%>
+    </td>
+    <td id="bookerfavo-<%= booker.id %>">
+        <%= render partial: "bookerfavo", locals: { booker: booker } %>
+    </td>
+    <td>
+        <%= link_to'Edit',edit_book_path(booker.id), class:"btn btn-success"%>
+    </td>
+    <td>
+        <%= link_to 'Destroy', book_path(booker), method: :delete, data: { confirm: '削除しますか？' },class:"btn btn-danger" %>
+    </td>
+</tr>
+<% else %>
+<tr>
+    <td>
+        <%= link_to user_path(booker.user.id) do %>
+        <%= attachment_image_tag booker.user,:profile_image, size:"50x50", format: 'jpeg' , fallback: "no_image.jpg"%><br>
+        <%= booker.user.name %>
+        <% end %>
+    </td>
+    <td>
+        <%= booker.title%>
+    </td>
+    <td>
+        <%= booker.body%>
+    </td>
+    <td id="bookerfavo-<%= booker.id %>">
+        <%= render partial: "bookerfavo", locals: { booker: booker } %>
+    </td>
+</tr>
+<% end %>

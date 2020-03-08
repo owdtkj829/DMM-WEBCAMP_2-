@@ -1,5 +1,4 @@
 class BooksController < ApplicationController
-
   before_action :correct_user, only: [:edit, :update,]
 
   def show
@@ -7,7 +6,7 @@ class BooksController < ApplicationController
     @book = Book.new
     @books = Book.all
     @book_comment = BookComment.new
-    @book_comments = BookComment.all
+    @book_comments = @booker.book_comments
     if  @booker.user_id == current_user.id
         @user = current_user
     else
@@ -30,6 +29,8 @@ class BooksController < ApplicationController
     @user = current_user
     @books = Book.all
     @book = Book.new(book_params)
+    @booker = Book.find(params[:id])
+    @booker.save
     @book.user_id = current_user.id
     if @book.save
       flash[:notice] = "successfully"
@@ -38,6 +39,14 @@ class BooksController < ApplicationController
       flash.now[:alert] = 'error'
       render :index
     end
+  end
+
+  def destroy
+    @book = Book.find(params[:id])
+    @book.destroy
+    @booker = Book.find(params[:id])
+    @booker.destroy
+    redirect_to books_path
   end
 
   def update
@@ -53,12 +62,6 @@ class BooksController < ApplicationController
 
   def edit
     @book = Book.find(params[:id])
-  end
-
-  def destroy
-    @book = Book.find(params[:id])
-    @book.destroy
-    redirect_to books_path
   end
 
   def search

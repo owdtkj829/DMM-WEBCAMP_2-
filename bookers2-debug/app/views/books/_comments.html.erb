@@ -1,0 +1,8 @@
+<% book_comments.each do |book_comment| %>
+<p>
+    <%= book_comment.user.name%>
+</p>
+<p>コメント：
+    <%= book_comment.comment %>
+</p>
+<% end %>
